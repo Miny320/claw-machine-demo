@@ -4,7 +4,10 @@ A small claw machine reward game for the classroom.
 It runs in the browser from one HTML file.
 There is nothing to install and no login.
 
-**Play it here: https://claw-machine-demo.vercel.app**
+| Version | File | Play it here |
+| --- | --- | --- |
+| Halloween | `halloween/index.html` | https://claw-machine-demo.vercel.app/halloween/ |
+| Original demo | `index.html` | https://claw-machine-demo.vercel.app |
 
 <p>
   <img src="screenshots/play.png" alt="The claw lifts a toy out of the machine" width="49%">
@@ -13,10 +16,10 @@ There is nothing to install and no login.
 
 ## How to run
 
-Open the link above, or run it from your own computer:
+Open one of the links above, or run it from your own computer:
 
 1. Download this repository.
-2. Double-click `index.html`.
+2. Double-click `halloween/index.html`, or `index.html` for the original demo.
 
 It opens in Chrome, Edge or Safari.
 It needs no server, no build step and no internet.
@@ -51,11 +54,11 @@ If nothing is below the claw, it comes up empty and the player can try again.
 
 ## How it is built
 
-- Everything is in `index.html`: the page, the styles, the script and the toy picture.
+- Each version is one HTML file: the page, the styles, the script and the toy pictures.
 - The script is plain JavaScript on a Canvas, with no libraries.
 - It uses only old (ES5) JavaScript syntax, so old tablets can run it.
 - The machine, the claw, the buttons and the confetti are drawn in code.
-- The only image is the toy, stored as base64 text at the bottom of the file.
+- The only images are the toys, stored as base64 text at the bottom of the file.
 - The page makes no outside requests.
 
 ## Change the game
@@ -87,7 +90,8 @@ The game treats every toy as a circle, so round toys fit best.
 1. Make a PNG with a transparent background, about 640 pixels wide.
 2. Turn it into base64 text (see the commands below).
 3. Paste that text into the `toy-art` block at the bottom of `index.html`, in place of the old text.
-4. Set `TOY_ART` to the middle and the size of the round body of the toy.
+   The Halloween version has one block for each toy, and the `TOY_ARTS` list says which block each toy uses.
+4. Set `TOY_ART` (or the toy's line in `TOY_ARTS`) to the middle and the size of the round body of the toy.
    `cx` and `r` are fractions of the picture width, and `cy` is a fraction of its height.
 
 Windows (PowerShell), copies the text to the clipboard:
@@ -116,19 +120,19 @@ Still to check by hand: Safari on an iPad or a Mac, and a real Chromebook.
 
 | File | What it is |
 | --- | --- |
-| `index.html` | The whole game |
-| `README.txt` | A short plain note for people who get the game as a zip |
+| `halloween/index.html` | The Halloween version |
+| `index.html` | The original demo |
 | `screenshots/` | The pictures on this page |
 
-To share the game as a zip, pack `index.html` and `README.txt`:
+To share a version as a zip, pack its HTML file:
 
 ```powershell
-Compress-Archive -Path index.html, README.txt -DestinationPath claw-machine-demo.zip -Force
+Compress-Archive -Path halloween\index.html -DestinationPath claw-machine-halloween.zip -Force
 ```
 
 ## Rights
 
-This is a trial project made for a client.
-The soccer ball illustration belongs to the client and is used here only for this demo.
+This project is made for a client.
+The toy illustrations belong to the client and are used here only for this game.
 There is no open source licence.
 Please do not copy or reuse the code or the artwork without permission.

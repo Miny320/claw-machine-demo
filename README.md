@@ -37,6 +37,10 @@ It needs no server, no build step and no internet.
 Hold an arrow button to keep the claw moving.
 A quick tap moves it one small step.
 
+In the Halloween version the claw does not carry the toy to the prize door by itself.
+After the lift, the player moves it to the left with the button, the key or a tap on the glass.
+When it arrives above the prize door, the claw lets the toy go.
+
 The claw grabs the toy right below it.
 When the claw is in the right place, that toy wiggles and the DROP button pulses.
 If nothing is below the claw, it comes up empty and the player can try again.
@@ -45,7 +49,7 @@ If nothing is below the claw, it comes up empty and the player can try again.
 
 - The claw moves, drops, closes, lifts and carries the toy to the chute.
 - The motion is smooth, with a swinging cable and soft starts and stops.
-- Six toys sit in a pile with simple physics, and the machine refills when it is empty.
+- The toys sit in a pile with simple physics (six in the demo, ten in the Halloween version), and the machine refills when it is empty.
 - A win screen shows the prize with confetti, and a counter keeps the number of prizes.
 - Mouse, touch and keyboard all work, also at the same time.
 - The picture scales to any screen, from a phone to a 4K interactive whiteboard.
@@ -82,6 +86,7 @@ The `SETTINGS` block at the top of the script holds the numbers and texts that a
 Each toy has a size (`r`) and a resting tilt (`tilt`).
 Each top toy rests in a gap of the floor row (`gap`).
 Keep the floor row full, which means its `r` values add up to about 258.
+The Halloween version has `TOP_ROWS` instead, a list of rows, and each row rests in the gaps of the row below it.
 
 ### Use another toy picture
 

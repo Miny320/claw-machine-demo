@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="description" content="Halloween claw machine reward game. Move the claw, drop it, and grab a toy.">
 <title>Halloween Claw Machine</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='27' fill='%23E60B75' stroke='%23151320' stroke-width='6'/%3E%3Cpath d='M20 25 L32 43 L44 25' fill='none' stroke='%23fff' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='27' fill='%23C4ADF1' stroke='%23151320' stroke-width='6'/%3E%3Cpath d='M20 25 L32 43 L44 25' fill='none' stroke='%23fff' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <style>
   html, body {
     margin: 0;
@@ -84,7 +84,7 @@
     startMessage: 'Move the claw, then press DROP!',
     missMessage: 'So close! Try again!',
     winSign: 'WINNER!',
-    winMessages: ['You got it!', 'Great job!', 'Well done!', 'Awesome!'],
+    winMessages: ['Spooktacular!'],
     againLabel: 'Play again'
   };
 
@@ -119,29 +119,33 @@
   // ------------------------------------------------------------------
   // 2. Colours
   // ------------------------------------------------------------------
-  // Halloween: a night sky behind a pink machine, with orange and yellow lights.
+  // Halloween: a lavender machine under a big yellow moon, with lime, orange and pink lights.
+  // The colours come from the client's screenshot of 2026-10-15.
   var INK = '#151320';
   var COL = {
-    wall: '#262033', wallGlow: '#2E2740',
-    wallStar: '#363049', wallMoon: '#4A4360', wallBat: '#FA803D', wallStarLine: '#CBA0DF',
-    skirting: '#4A3F66',
-    floor: '#3A2F5B',
-    body: '#E60B75', bodyDark: '#B8095E', bodyLight: '#F5A7D7',
-    glass: '#EBD4F2', glassBand: '#E2C5EC', glassMark: '#D7A9EE',
-    inFloor: '#5A3A8C', hole: '#2E1B4F',
-    sign: '#FDB92E', signDark: '#F5B108',
-    accent: '#FA803D', accentDark: '#D9611F', accentLight: '#FFC79A',
-    metal: '#E3E8F0', metalDark: '#A9B3C6',    // the claw and the rail stay silver
+    wall: '#262033', wallDot: '#363049',
+    moon: '#FFFF72', moonDark: '#F3EF5E', moonGlow: '255, 255, 114',
+    skirting: '#FDB92D',
+    floor: '#ECE8ED',
+    body: '#C4ADF1', bodyDark: '#986BE4', bodyLight: '#ED97ED', panel: '#C4ADF1',
+    glass: '#FFFFFF', glassBand: '#ECE8ED', glassMark: '#F2AEA0',
+    inFloor: '#362654', hole: '#D6F727',
+    sign: '#D3D3D3', signDark: '#B4B4B4', plate: '#FDB92D',
+    btn: '#FDB92D', btnDark: '#E09F14',
+    accent: '#FA7F3D', accentDark: '#D9611F', accentLight: '#FFC79A',
+    claw: '#FFFF72', clawLight: '#FFFFC2',
+    metal: '#E3E8F0', metalDark: '#A9B3C6',    // the claw fingers and the rail stay silver
     dark: '#242424',
-    go: '#E60B75', goDark: '#B8095E',
-    off: '#6E6382', offDark: '#4F4663',
+    go: '#986BE4', goDark: '#7A4FC9',
+    off: '#8C80A8', offDark: '#6B5F8A',
     white: '#FFFFFF'
   };
+  var LIGHTS = ['#D6F727', '#FA7F3D', '#ED97ED'];   // the bulbs on the sign
   // Confetti: paper strips, and little stars, bats and moons.
-  var CONFETTI = ['#E60B75', '#FA803D', '#FDB92E', '#CBA0DF', '#F5A7D7', '#FFFFFF'];
-  var CONFETTI_STAR = ['#FDB92E', '#FFFFFF', '#F5A7D7'];
-  var CONFETTI_BAT = ['#FA803D', '#CBA0DF', '#F5A7D7'];
-  var CONFETTI_MOON = ['#CBA0DF', '#FFFFFF', '#FDB92E'];
+  var CONFETTI = ['#D6F727', '#FA7F3D', '#ED97ED', '#FFFF72', '#C4ADF1', '#FFFFFF'];
+  var CONFETTI_STAR = ['#FFFF72', '#FFFFFF', '#ED97ED'];
+  var CONFETTI_BAT = ['#986BE4', '#FA7F3D', '#C4ADF1'];
+  var CONFETTI_MOON = ['#FFFF72', '#FFFFFF', '#D6F727'];
 
   // ------------------------------------------------------------------
   // 3. Layout of the machine, in design units (the machine is 840 x 920)
@@ -389,14 +393,14 @@
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
 
-    // Corner buttons and the prize counter.
+    // Corner buttons.
     var u = clamp(Math.min(w, h) * 0.085, 44, 120);
     var m = Math.round(u * 0.22);
     var padX = 12, padTop = 8, padBottom = 12;
     var s = Math.min((w - 2 * padX) / MW, (h - padTop - padBottom) / MH);
     // If the sign would sit under the corner buttons, keep the top strip free.
     var sideRoom = w / 2 - (SIGN.w / 2) * s;
-    var hudWidth = Math.max(u * 2.35 + m, (fsOk ? 2 : 1) * (u + m)) + m;
+    var hudWidth = (fsOk ? 2 : 1) * (u + m) + m;
     if (sideRoom < hudWidth) {
       padTop = m + u + 6;
       s = Math.min(s, (h - padTop - padBottom) / MH);
@@ -408,8 +412,7 @@
       u: u,
       m: m,
       sound: { x: w - m - u / 2, y: m + u / 2, r: u / 2 },
-      full: fsOk ? { x: w - m - u * 1.5 - m * 0.7, y: m + u / 2, r: u / 2 } : null,
-      count: { x: m, y: m, w: u * 2.35, h: u }
+      full: fsOk ? { x: w - m - u * 1.5 - m * 0.7, y: m + u / 2, r: u / 2 } : null
     };
     buildLayers();
   }
@@ -593,8 +596,8 @@
   };
   var game = {
     state: 'intro', t: 0, time: 0,
-    won: 0, lastArt: 0, lastAct: -10, greeted: false,
-    winMsg: '', dropFlash: -1, countPop: 0,
+    won: 0, lastAct: -10, greeted: false,
+    winMsg: '', dropFlash: -1,
     squeezed: false, released: false, arrived: -1, thud: false
   };
   var sign = { text: SETTINGS.title, t: 1, until: 0 };
@@ -1130,8 +1133,6 @@
   }
   function finishRound() {
     game.won++;
-    game.countPop = 1;
-    game.lastArt = prize.art;
     prize = null;
     setSign(SETTINGS.title);
     if (balls.length === 0) {
@@ -1301,7 +1302,7 @@
   // Most pieces are paper strips. The rest are stars, bats and moons.
   function addConfetti(x, y, vx, vy) {
     var u = Math.random();
-    var kind = u < 0.55 ? 0 : (u < 0.75 ? 1 : (u < 0.9 ? 2 : 3));   // 0 strip, 1 star, 2 bat, 3 moon
+    var kind = u < 0.4 ? 0 : (u < 0.6 ? 1 : (u < 0.9 ? 2 : 3));   // 0 strip, 1 star, 2 bat, 3 moon
     var cols = [CONFETTI, CONFETTI_STAR, CONFETTI_BAT, CONFETTI_MOON][kind];
     confetti.push({
       kind: kind,
@@ -1378,7 +1379,6 @@
 
     sign.t += dt;
     if (sign.until && game.time > sign.until) setSign(SETTINGS.title);
-    game.countPop = Math.max(0, game.countPop - dt * 2.5);
 
     var s = game.state;
     setHum(Math.abs(claw.v) > 14 && (s === 'ready' || s === 'intro' || s === 'carrying') && !document.hidden);
@@ -1392,51 +1392,31 @@
     var floorTop = view.oy + 886 * s;
     c.fillStyle = COL.wall;
     c.fillRect(0, 0, w, h);
-    // soft light on the wall behind the machine
-    circle(c, view.ox + 420 * s, view.oy + 470 * s, 640 * s);
-    c.fillStyle = COL.wallGlow;
-    c.fill();
-    // wallpaper: stars, moons and bats in the night sky. The mix comes from
-    // the row and the column, not from chance, so the wall never changes.
-    var step = 104 * s, row = 0, col, x, y, pick, size;
-    c.lineJoin = 'round';
+    // dotted wallpaper
+    var step = 104 * s, rad = 9 * s, row = 0, x, y, i;
+    c.fillStyle = COL.wallDot;
     for (y = (view.oy % (step / 2)) - step; y < floorTop; y += step / 2, row++) {
-      col = 0;
-      for (x = (view.ox % step) - step + (row % 2 ? step / 2 : 0); x < w + step; x += step, col++) {
-        pick = (row * 37 + col * 53 + row * col * 7) % 23;
-        size = (1 + 0.25 * ((row + col) % 3)) * s;
-        c.save();
-        c.translate(x, y);
-        c.rotate(((row * 5 + col * 3) % 7 - 3) * 0.12);
-        if (pick < 9) {
-          starPath(c, 0, 0, 11 * size, 0.48);
-          c.fillStyle = COL.wallStar;
-          c.fill();
-        } else if (pick < 13) {
-          moonPath(c, 0, 0, 8 * size);
-          c.fillStyle = COL.wallMoon;
-          c.fill();
-        } else if (pick < 16) {
-          starPath(c, 0, 0, 5 * size, 0.48);
-          c.fillStyle = COL.wallStar;
-          c.fill();
-        } else if (pick < 18) {
-          batPath(c, 0, 0, 13 * size);
-          c.fillStyle = COL.wallBat;
-          c.fill();
-        } else if (pick < 21) {
-          starPath(c, 0, 0, 10 * size, 0.48);
-          c.strokeStyle = COL.wallStarLine;
-          c.lineWidth = 2.6 * s;
-          c.stroke();
-        } else {
-          starPath(c, 0, 0, 5 * size, 0.48);
-          c.strokeStyle = COL.white;
-          c.lineWidth = 1.6 * s;
-          c.stroke();
-        }
-        c.restore();
+      for (x = (view.ox % step) - step + (row % 2 ? step / 2 : 0); x < w + step; x += step) {
+        circle(c, x, y, rad);
+        c.fill();
       }
+    }
+    // full moon behind the machine, with a soft glow and a few craters
+    var mx = view.ox + 420 * s, my = view.oy + 440 * s, mr = 600 * s;
+    var craters = [[-40, 300, 34], [-90, 560, 24], [880, 250, 30], [910, 520, 22], [300, -80, 26], [580, -110, 18]];
+    circle(c, mx, my, mr + 90 * s);
+    c.fillStyle = 'rgba(' + COL.moonGlow + ', 0.06)';
+    c.fill();
+    circle(c, mx, my, mr + 40 * s);
+    c.fillStyle = 'rgba(' + COL.moonGlow + ', 0.1)';
+    c.fill();
+    circle(c, mx, my, mr);
+    c.fillStyle = COL.moon;
+    c.fill();
+    c.fillStyle = COL.moonDark;
+    for (i = 0; i < craters.length; i++) {
+      circle(c, view.ox + craters[i][0] * s, view.oy + craters[i][1] * s, craters[i][2] * s);
+      c.fill();
     }
     // skirting board and floor
     c.fillStyle = COL.skirting;
@@ -1455,27 +1435,27 @@
 
     // shadow on the floor
     oval(c, 420, 904, 424, 18);
-    c.fillStyle = 'rgba(0, 0, 0, 0.3)';
+    c.fillStyle = 'rgba(0, 0, 0, 0.14)';
     c.fill();
 
     // feet
     rr(c, 62, 884, 100, 28, 10);
-    paint(c, COL.dark, INK, 5);
+    paint(c, COL.bodyDark, INK, 5);
     rr(c, 678, 884, 100, 28, 10);
-    paint(c, COL.dark, INK, 5);
+    paint(c, COL.bodyDark, INK, 5);
 
     // sign on top
     rr(c, SIGN.x, SIGN.y, SIGN.w, SIGN.h, [56, 56, 0, 0]);
     paint(c, COL.sign, INK, 6);
     rr(c, PLATE.x, PLATE.y, PLATE.w, PLATE.h, PLATE.h / 2);
-    paint(c, COL.accent, INK, 5);
+    paint(c, COL.plate, INK, 5);
 
     // cabinet body and control panel
     rr(c, CAB.x, CAB.y, CAB.w, CAB.h, CAB.r);
     paint(c, COL.body, null, 0);
     c.save();
     c.clip();
-    c.fillStyle = COL.bodyDark;
+    c.fillStyle = COL.panel;
     c.fillRect(CAB.x, PANEL_Y, CAB.w, CAB.y + CAB.h - PANEL_Y);
     c.fillStyle = COL.bodyLight;
     c.fillRect(CAB.x, PANEL_Y, CAB.w, 18);
@@ -1488,9 +1468,9 @@
 
     // small details on the frame
     rr(c, 30, 160, 9, 250, 4.5);
-    paint(c, COL.bodyLight, null, 0);
+    paint(c, COL.bodyDark, null, 0);
     rr(c, 30, 424, 9, 46, 4.5);
-    paint(c, COL.bodyLight, null, 0);
+    paint(c, COL.bodyDark, null, 0);
     rr(c, 801, 380, 9, 270, 4.5);
     paint(c, COL.bodyDark, null, 0);
     circle(c, 66, 119, 5);
@@ -1544,7 +1524,7 @@
     c.restore();
 
     // prize door
-    drawText(c, 'PRIZE', DOOR.x + DOOR.w / 2, 711, 21, COL.sign, null, 0, 150);
+    drawText(c, 'PRIZE', DOOR.x + DOOR.w / 2, 711, 21, INK, null, 0, 150);
     rr(c, DOOR.x, DOOR.y, DOOR.w, DOOR.h, 16);
     paint(c, COL.hole, INK, 5);
   }
@@ -1631,7 +1611,7 @@
     var to = (claw.target ? claw.target.y - claw.target.r : surfaceBelow(claw.x)) - 10;
     if (to - from < 16) return;
     c.save();
-    c.strokeStyle = claw.target ? 'rgba(250, 128, 61, 0.9)' : 'rgba(250, 128, 61, 0.45)';
+    c.strokeStyle = claw.target ? 'rgba(237, 151, 237, 0.95)' : 'rgba(237, 151, 237, 0.5)';
     c.lineWidth = 6;
     c.lineCap = 'round';
     c.setLineDash([0.1, 17]);
@@ -1659,7 +1639,7 @@
     c.lineWidth = PRONG_W - 8.5;
     c.stroke();
     circle(c, PRONG.tx, PRONG.ty, TIP_PAD);
-    paint(c, COL.accent, INK, 3.5);
+    paint(c, COL.claw, INK, 3.5);
     c.restore();
   }
 
@@ -1682,8 +1662,8 @@
     rr(c, -7.5, -HUB_H - 8, 15, 14, 3);
     paint(c, COL.metalDark, INK, 4);
     rr(c, -39, -HUB_H, 78, 30, 13);
-    paint(c, COL.accent, INK, 5);
-    c.strokeStyle = COL.accentLight;
+    paint(c, COL.claw, INK, 5);
+    c.strokeStyle = COL.clawLight;
     c.lineWidth = 5;
     c.beginPath();
     c.moveTo(-25, -HUB_H + 9);
@@ -1699,8 +1679,8 @@
 
     // trolley on the rail
     rr(c, claw.x - 50, RAIL_Y - 19, 100, 38, 12);
-    paint(c, COL.accent, INK, 5);
-    c.strokeStyle = COL.accentLight;
+    paint(c, COL.claw, INK, 5);
+    c.strokeStyle = COL.clawLight;
     c.lineWidth = 5;
     c.beginPath();
     c.moveTo(claw.x - 34, RAIL_Y - 10);
@@ -1721,7 +1701,11 @@
     for (i = 0; i < 11; i++) {
       lit = fast ? (i + phase) % 3 === 0 : (i + phase) % 2 === 0;
       circle(c, 170 + i * 50, 24, 7.5);
-      paint(c, lit ? COL.white : COL.signDark, INK, 3);
+      paint(c, LIGHTS[i % LIGHTS.length], INK, 3);
+      if (lit) {                      // a bulb that is on gets a bright spot
+        circle(c, 170 + i * 50, 24, 3.2);
+        paint(c, COL.white, null, 0);
+      }
     }
     c.save();
     c.beginPath();
@@ -1734,8 +1718,8 @@
 
   function drawButton(c, b, kind, pressed, live, pulse) {
     var lift = pressed ? 2 : 9;
-    var top = !live ? COL.off : (kind === 'drop' ? COL.accent : COL.sign);
-    var side = !live ? COL.offDark : (kind === 'drop' ? COL.accentDark : COL.signDark);
+    var top = !live ? COL.off : (kind === 'drop' ? COL.accent : COL.btn);
+    var side = !live ? COL.offDark : (kind === 'drop' ? COL.accentDark : COL.btnDark);
     c.save();
     c.translate(b.x, b.y);
     if (pulse > 0) c.scale(1 + 0.05 * pulse, 1 + 0.05 * pulse);
@@ -1812,10 +1796,10 @@
       r = lerp(p.trayR, SHOW.r, backOut(u));
       ang = lerp(p.showFrom, 0, easeOut(u)) + Math.sin(t * 1.7) * 0.06 * u;
     } else {
-      var h = view.hud.count;
-      x = lerp(SHOW.x, (h.x + h.h / 2 - view.ox) / view.s, out);
-      y = lerp(SHOW.y, (h.y + h.h / 2 - view.oy) / view.s, out);
-      r = lerp(SHOW.r, h.h * 0.36 / view.s, out);
+      // the prize floats up and shrinks away
+      x = SHOW.x;
+      y = SHOW.y - 60 * out;
+      r = Math.max(SHOW.r * (1 - out), 1);
       ang = 0;
     }
 
@@ -1831,7 +1815,7 @@
       c.lineTo(2600, -342);
       c.lineTo(2600, 342);
       c.closePath();
-      c.fillStyle = i % 2 ? 'rgba(255, 255, 255, 0.08)' : 'rgba(250, 128, 61, 0.16)';
+      c.fillStyle = i % 2 ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 114, 0.16)';
       c.fill();
     }
     c.restore();
@@ -1889,27 +1873,11 @@
     }
   }
 
-  // Corner buttons and the prize counter, in screen pixels.
+  // Corner buttons, in screen pixels.
   function drawHud(c) {
     var h = view.hud, k = h.u / 60, q, i;
     c.lineJoin = 'round';
     c.lineCap = 'round';
-
-    // prize counter
-    q = h.count;
-    var pop = 1 + 0.22 * game.countPop;
-    c.save();
-    c.translate(q.x + q.w / 2, q.y + q.h / 2);
-    c.scale(pop, pop);
-    rr(c, -q.w / 2, -q.h / 2, q.w, q.h, q.h / 2);
-    paint(c, COL.white, INK, 3.5 * k);
-    drawToy(c, game.lastArt, -q.w / 2 + q.h / 2, 0, q.h * 0.36, 0, 0, false);
-    c.font = font(q.h * 0.46);
-    c.textAlign = 'center';
-    c.textBaseline = 'middle';
-    c.fillStyle = INK;
-    c.fillText('\u00D7 ' + game.won, -q.w / 2 + q.h + (q.w - q.h) / 2 - q.h * 0.1, q.h * 0.03);
-    c.restore();
 
     // sound button
     q = h.sound;

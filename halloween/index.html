@@ -93,15 +93,18 @@
   // in a block with this id. cx and r say where the round body of the toy
   // sits inside its picture, as fractions of the picture width, and cy as a
   // fraction of its height. The game treats each toy as a circle.
+  // r is chosen so that the body of every toy (its solid middle, without thin
+  // ears, wings, capes or hats) is drawn at the same size: r = 0.00079 times
+  // the square root of (body width times body height) in the 640 px picture.
   var TOY_ARTS = [
-    { id: 'toy-vampire', cx: 0.556, cy: 0.489, r: 0.43 },
-    { id: 'toy-mummy', cx: 0.502, cy: 0.481, r: 0.43 },
-    { id: 'toy-werewolf', cx: 0.55, cy: 0.5, r: 0.43 },
-    { id: 'toy-monster', cx: 0.48, cy: 0.5, r: 0.45 },
-    { id: 'toy-cauldron', cx: 0.517, cy: 0.48, r: 0.375 },
-    { id: 'toy-bat', cx: 0.52, cy: 0.54, r: 0.36 },
-    { id: 'toy-witch', cx: 0.555, cy: 0.56, r: 0.37 },
-    { id: 'toy-candycorn', cx: 0.46, cy: 0.52, r: 0.41 }
+    { id: 'toy-vampire', cx: 0.556, cy: 0.489, r: 0.394 },
+    { id: 'toy-mummy', cx: 0.502, cy: 0.481, r: 0.405 },
+    { id: 'toy-werewolf', cx: 0.55, cy: 0.5, r: 0.42 },
+    { id: 'toy-monster', cx: 0.48, cy: 0.5, r: 0.438 },
+    { id: 'toy-cauldron', cx: 0.517, cy: 0.48, r: 0.383 },
+    { id: 'toy-bat', cx: 0.52, cy: 0.54, r: 0.351 },
+    { id: 'toy-witch', cx: 0.555, cy: 0.56, r: 0.40 },
+    { id: 'toy-candycorn', cx: 0.46, cy: 0.52, r: 0.414 }
   ];
 
   // Toys in the machine. r is the size, tilt is how the toy likes to sit,
@@ -109,22 +112,23 @@
   // The floor row fills the floor (its r values add up to about 258).
   // Every toy in TOP_ROWS rests in a gap of the row below it: gap 0 is
   // between the first and the second toy of that row, and so on.
+  // Every toy has the same r, so every toy is drawn at the same size.
   var FLOOR_ROW = [
-    { r: 52, tilt: -0.16, art: 0 },
-    { r: 51, tilt: 0.12, art: 1 },
-    { r: 52, tilt: -0.07, art: 2 },
-    { r: 51, tilt: 0.2, art: 3 },
-    { r: 52, tilt: -0.1, art: 4 }
+    { r: 51.5, tilt: -0.16, art: 0 },
+    { r: 51.5, tilt: 0.12, art: 1 },
+    { r: 51.5, tilt: -0.07, art: 2 },
+    { r: 51.5, tilt: 0.2, art: 3 },
+    { r: 51.5, tilt: -0.1, art: 4 }
   ];
   var TOP_ROWS = [
     [
-      { gap: 0, r: 50, tilt: 0.1, art: 5 },
-      { gap: 1, r: 49, tilt: -0.14, art: 6 },
-      { gap: 2, r: 50, tilt: 0.16, art: 7 },
-      { gap: 3, r: 49, tilt: -0.2, art: 0 }
+      { gap: 0, r: 51.5, tilt: 0.1, art: 5 },
+      { gap: 1, r: 51.5, tilt: -0.14, art: 6 },
+      { gap: 2, r: 51.5, tilt: 0.16, art: 7 },
+      { gap: 3, r: 51.5, tilt: -0.2, art: 0 }
     ],
     [
-      { gap: 1, r: 48, tilt: 0.08, art: 1 }
+      { gap: 1, r: 51.5, tilt: 0.08, art: 1 }
     ]
   ];
 

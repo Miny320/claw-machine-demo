@@ -40,6 +40,8 @@ A quick tap moves it one small step.
 In the Halloween version the claw does not carry the toy to the prize door by itself.
 After the lift, the player moves it to the left with the button, the key or a tap on the glass.
 When it arrives above the prize door, the claw lets the toy go.
+One of the things in the machine is a mystery capsule.
+It rattles in the prize tray, then cracks open on the win screen and a toy pops out, a different one each time.
 
 The claw grabs the toy right below it.
 When the claw is in the right place, that toy wiggles and the DROP button pulses.
@@ -49,7 +51,7 @@ If nothing is below the claw, it comes up empty and the player can try again.
 
 - The claw moves, drops, closes, lifts and carries the toy to the chute.
 - The motion is smooth, with a swinging cable and soft starts and stops.
-- The toys sit in a pile with simple physics (six in the demo, ten in the Halloween version), and the machine refills when it is empty.
+- The toys sit in a pile with simple physics (six in the demo, nine plus a mystery capsule in the Halloween version), and the machine refills when it is empty.
 - A win screen shows the prize with confetti, and a counter keeps the number of prizes.
 - Mouse, touch and keyboard all work, also at the same time.
 - The picture scales to any screen, from a phone to a 4K interactive whiteboard.

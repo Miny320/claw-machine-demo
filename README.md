@@ -7,6 +7,7 @@ There is nothing to install and no login.
 | Version | File | Play it here |
 | --- | --- | --- |
 | Halloween | `halloween/index.html` | https://claw-machine-demo.vercel.app/halloween/ |
+| Winter | `winter/index.html` | https://claw-machine-demo.vercel.app/winter/ |
 | Original demo | `index.html` | https://claw-machine-demo.vercel.app |
 
 <p>
@@ -19,7 +20,7 @@ There is nothing to install and no login.
 Open one of the links above, or run it from your own computer:
 
 1. Download this repository.
-2. Double-click `halloween/index.html`, or `index.html` for the original demo.
+2. Double-click `halloween/index.html` or `winter/index.html`, or `index.html` for the original demo.
 
 It opens in Chrome, Edge or Safari.
 It needs no server, no build step and no internet.
@@ -129,6 +130,7 @@ Still to check by hand: Safari on an iPad or a Mac, and a real Chromebook.
 | File | What it is |
 | --- | --- |
 | `halloween/index.html` | The Halloween version |
+| `winter/index.html` | The Winter version |
 | `index.html` | The original demo |
 | `screenshots/` | The pictures on this page |
 

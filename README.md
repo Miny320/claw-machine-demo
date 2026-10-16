@@ -42,6 +42,7 @@ After the lift, the player moves it to the left with the button, the key or a ta
 When it arrives above the prize door, the claw lets the toy go.
 One of the things in the machine is a mystery capsule.
 It rattles in the prize tray, then cracks open on the win screen and a toy pops out, a different one each time.
+Sometimes a rare golden pumpkin comes out instead, with a golden glow. It is never in the pile, and it never comes twice in a row.
 
 The claw grabs the toy right below it.
 When the claw is in the right place, that toy wiggles and the DROP button pulses.

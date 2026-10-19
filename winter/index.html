@@ -86,7 +86,7 @@
     carryMessage: 'Now bring it to the prize door!',
     capsuleMessage: 'Mystery! Bring it to the prize door!',
     capsuleSign: "What's inside?",
-    goldenSign: 'GOLDEN PRIZE!',
+    goldenSign: 'GOLDEN HOT CHOCOLATE!',
     goldenChance: 0.25,   // chance that a capsule holds the golden toy (0.25 = about 1 in 4)
     goldenMaxWait: 5,     // after this many capsules without it, the next capsule always holds it
     winSign: 'WINNER!',
@@ -106,8 +106,8 @@
     { id: 'toy-penguin', cx: 0.508, cy: 0.494, r: 0.464 },
     { id: 'toy-polarbear', cx: 0.481, cy: 0.49, r: 0.429 },
     { id: 'toy-beanie', cx: 0.477, cy: 0.52, r: 0.42 },
-    { id: 'toy-fox', cx: 0.478, cy: 0.516, r: 0.435 },
-    { id: 'toy-mitten', cx: 0.527, cy: 0.5, r: 0.41 },
+    { id: 'toy-fox', cx: 0.478, cy: 0.516, r: 0.40 },
+    { id: 'toy-mitten', cx: 0.527, cy: 0.5, r: 0.445 },
     { id: 'toy-cocoa', cx: 0.504, cy: 0.563, r: 0.406 },
     { id: 'toy-tree', cx: 0.501, cy: 0.547, r: 0.4 },
     { id: 'toy-snowman', cx: 0.509, cy: 0.491, r: 0.412 },
@@ -119,7 +119,7 @@
     { id: 'toy-capsule-full', cx: 0.498, cy: 0.497, r: 0.504 },
     { id: 'toy-capsule-top', cx: 0.5, cy: 0.5, r: 0.5 },
     { id: 'toy-capsule-bottom', cx: 0.5, cy: 0.5, r: 0.5 },
-    { id: 'toy-golden', cx: 0.5, cy: 0.5, r: 0.42 }
+    { id: 'toy-golden-cocoa', cx: 0.496, cy: 0.563, r: 0.409 }
   ];
   function artIndex(id) {
     for (var i = 0; i < TOY_ARTS.length; i++) if (TOY_ARTS[i].id === id) return i;
@@ -127,7 +127,7 @@
   }
   // Positions in TOY_ARTS. CAPSULE is also the number of toys.
   var CAPSULE = artIndex('toy-capsule-full'), CAP_TOP = artIndex('toy-capsule-top');
-  var CAP_BOTTOM = artIndex('toy-capsule-bottom'), GOLDEN = artIndex('toy-golden');
+  var CAP_BOTTOM = artIndex('toy-capsule-bottom'), GOLDEN = artIndex('toy-golden-cocoa');
   // Each half is drawn centred on the full capsule, the lid at the top and the
   // cup at the bottom. The numbers are the width of a half as a fraction of the
   // full capsule width.

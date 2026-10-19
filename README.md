@@ -53,7 +53,7 @@ If nothing is below the claw, it comes up empty and the player can try again.
 
 - The claw moves, drops, closes, lifts and carries the toy to the chute.
 - The motion is smooth, with a swinging cable and soft starts and stops.
-- The toys sit in a pile with simple physics (six in the demo, nine plus a mystery capsule in the Halloween version), and the machine refills when it is empty.
+- The toys sit in a pile with simple physics (six in the demo, nine plus a mystery capsule in the Halloween version, ten in the Winter version), and the machine refills when it is empty.
 - A win screen shows the prize with confetti, and a counter keeps the number of prizes.
 - Mouse, touch and keyboard all work, also at the same time.
 - The picture scales to any screen, from a phone to a 4K interactive whiteboard.

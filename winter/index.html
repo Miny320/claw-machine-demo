@@ -101,8 +101,11 @@
   // r is chosen so that the body of every toy (its solid middle, without thin
   // ears, wings, capes or hats) is drawn at the same size: r = 0.00079 times
   // the square root of (body width times body height) in the 640 px picture.
+  // fit (1 when left out) lets an airy toy sink deeper between the toys around
+  // it: toys touch at fit times their size. The floor, the walls and the claw
+  // always use the full size.
   var TOY_ARTS = [
-    { id: 'toy-snowflake', cx: 0.499, cy: 0.57, r: 0.399 },
+    { id: 'toy-snowflake', cx: 0.499, cy: 0.57, r: 0.399, fit: 0.7 },
     { id: 'toy-penguin', cx: 0.508, cy: 0.494, r: 0.464 },
     { id: 'toy-polarbear', cx: 0.481, cy: 0.49, r: 0.429 },
     { id: 'toy-beanie', cx: 0.477, cy: 0.52, r: 0.42 },
@@ -664,6 +667,7 @@
   function makeToy(x, r, tilt, art) {
     return {
       art: art,                // which picture, see TOY_ARTS
+      fit: TOY_ARTS[art].fit || 1,
       x: x, y: 0, px: x, py: 0, vx: 0, vy: 0, pvy: 0, pv: 0, r: r,
       angle: tilt, spin: 0, tilt: tilt,
       sq: 0, sqV: 0,           // squash and stretch
@@ -1320,7 +1324,7 @@
         for (j = i + 1; j < n; j++) {
           o = balls[j];
           if (b.held && o.held) continue;
-          var dx = o.x - b.x, dy = o.y - b.y, reach = b.r + o.r;
+          var dx = o.x - b.x, dy = o.y - b.y, reach = b.r * b.fit + o.r * o.fit;
           var d2 = dx * dx + dy * dy;
           if (d2 >= reach * reach) continue;
           var d = Math.sqrt(d2), nx = 0, ny = -1;

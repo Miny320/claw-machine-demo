@@ -138,24 +138,27 @@
   // Every toy in TOP_ROWS rests in a gap of the row below it: gap 0 is
   // between the first and the second toy of that row, and so on.
   // Every toy has the same r, so every toy is drawn at the same size.
+  // Ten toys, each one once, and the mystery capsule tucked in the middle row.
+  // The pale toys (polar bear, snowman, fox, snowflake, yeti) never touch each
+  // other: the colourful toys and the capsule sit between them. The fox and
+  // the polar bear, which look alike, are at the two ends of the floor.
   var FLOOR_ROW = [
-    { r: 51.5, tilt: -0.16, art: 1 },
-    { r: 51.5, tilt: 0.12, art: 6 },
-    { r: 51.5, tilt: -0.07, art: 9 },
-    { r: 51.5, tilt: 0.2, art: 5 },
-    { r: 51.5, tilt: -0.1, art: 2 }
+    { r: 51.5, tilt: -0.16, art: 2 },     // polar bear
+    { r: 51.5, tilt: 0.12, art: 1 },      // penguin
+    { r: 51.5, tilt: -0.07, art: 8 },     // snowman
+    { r: 51.5, tilt: 0.2, art: 3 },       // hat
+    { r: 51.5, tilt: -0.1, art: 4 }       // fox
   ];
-  // Ten toys, each one once, and the mystery capsule on top.
   var TOP_ROWS = [
     [
-      { gap: 0, r: 51.5, tilt: 0.1, art: 3 },
-      { gap: 1, r: 51.5, tilt: -0.14, art: 8 },
-      { gap: 2, r: 51.5, tilt: 0.16, art: 7 },
-      { gap: 3, r: 51.5, tilt: -0.2, art: 4 }
+      { gap: 0, r: 51.5, tilt: 0.1, art: 5 },       // mitten
+      { gap: 1, r: 51.5, tilt: 0, art: CAPSULE },   // mystery capsule
+      { gap: 2, r: 51.5, tilt: 0.16, art: 7 },      // tree
+      { gap: 3, r: 51.5, tilt: -0.2, art: 6 }       // hot chocolate
     ],
     [
-      { gap: 0, r: 51.5, tilt: 0, art: CAPSULE },
-      { gap: 2, r: 51.5, tilt: 0.06, art: 0 }
+      { gap: 0, r: 51.5, tilt: 0.06, art: 0 },      // snowflake
+      { gap: 2, r: 51.5, tilt: -0.08, art: 9 }      // yeti
     ]
   ];
 

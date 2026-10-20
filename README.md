@@ -38,12 +38,13 @@ It needs no server, no build step and no internet.
 Hold an arrow button to keep the claw moving.
 A quick tap moves it one small step.
 
-In the Halloween version the claw does not carry the toy to the prize door by itself.
+In the Halloween and Winter versions the claw does not carry the toy to the prize door by itself.
 After the lift, the player moves it to the left with the button, the key or a tap on the glass.
 When it arrives above the prize door, the claw lets the toy go.
 One of the things in the machine is a mystery capsule.
 It rattles in the prize tray, then cracks open on the win screen and a toy pops out, a different one each time.
-Sometimes a rare golden pumpkin comes out instead, with a golden glow. It is never in the pile, and it never comes twice in a row.
+Sometimes a rare golden toy comes out instead, with a golden glow (a golden pumpkin in Halloween, a golden hot chocolate in Winter).
+It is never in the pile, and it never comes twice in a row.
 
 The claw grabs the toy right below it.
 When the claw is in the right place, that toy wiggles and the DROP button pulses.
@@ -53,7 +54,7 @@ If nothing is below the claw, it comes up empty and the player can try again.
 
 - The claw moves, drops, closes, lifts and carries the toy to the chute.
 - The motion is smooth, with a swinging cable and soft starts and stops.
-- The toys sit in a pile with simple physics (six in the demo, nine plus a mystery capsule in the Halloween version, ten in the Winter version), and the machine refills when it is empty.
+- The toys sit in a pile with simple physics (six in the demo, nine plus a mystery capsule in the Halloween version, ten plus a mystery capsule in the Winter version), and the machine refills when it is empty.
 - A win screen shows the prize with confetti, and a counter keeps the number of prizes.
 - Mouse, touch and keyboard all work, also at the same time.
 - The picture scales to any screen, from a phone to a 4K interactive whiteboard.
@@ -90,7 +91,7 @@ The `SETTINGS` block at the top of the script holds the numbers and texts that a
 Each toy has a size (`r`) and a resting tilt (`tilt`).
 Each top toy rests in a gap of the floor row (`gap`).
 Keep the floor row full, which means its `r` values add up to about 258.
-The Halloween version has `TOP_ROWS` instead, a list of rows, and each row rests in the gaps of the row below it.
+The Halloween and Winter versions have `TOP_ROWS` instead, a list of rows, and each row rests in the gaps of the row below it.
 
 ### Use another toy picture
 
@@ -99,7 +100,7 @@ The game treats every toy as a circle, so round toys fit best.
 1. Make a PNG with a transparent background, about 640 pixels wide.
 2. Turn it into base64 text (see the commands below).
 3. Paste that text into the `toy-art` block at the bottom of `index.html`, in place of the old text.
-   The Halloween version has one block for each toy, and the `TOY_ARTS` list says which block each toy uses.
+   The Halloween and Winter versions have one block for each toy, and the `TOY_ARTS` list says which block each toy uses.
 4. Set `TOY_ART` (or the toy's line in `TOY_ARTS`) to the middle and the size of the round body of the toy.
    `cx` and `r` are fractions of the picture width, and `cy` is a fraction of its height.
 

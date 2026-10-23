@@ -1159,6 +1159,7 @@
       claw.held = null;
       claw.target = null;
       balls.splice(balls.indexOf(b), 1);
+      wakePile();
       b.held = false;
       prize = b;
       prize.phase = 'fall';
@@ -1345,10 +1346,14 @@
           var pen = reach - d;
           var wb = b.held ? 0 : (o.held ? 1 : 0.5);
           var wo = o.held ? 0 : (b.held ? 1 : 0.5);
+          // A toy in the claw only pushes the others sideways, it never lifts
+          // them. A toy resting on it slides off and falls back into the pile,
+          // instead of riding up and getting stuck against the side wall.
+          var up = (b.held || o.held) ? 0 : 1;
           b.x -= nx * pen * wb;
-          b.y -= ny * pen * wb;
+          b.y -= ny * pen * wb * up;
           o.x += nx * pen * wo;
-          o.y += ny * pen * wo;
+          o.y += ny * pen * wo * up;
           b.touch = true;
           o.touch = true;
         }
@@ -1408,10 +1413,10 @@
       b.sq = clamp(b.sq + b.sqV * dt, -1, 1);
       b.wig = approach(b.wig, (b === claw.target && game.state === 'ready') ? 1 : 0, 6 * dt);
     }
-    if (!pile.awake) {
-      if (h) { h.lastX = h.x; h.lastY = h.y; }
-      return;
-    }
+    // While the claw holds a toy the pile keeps moving, so a toy that slides
+    // off it always falls, even when the player waits before carrying.
+    if (h) wakePile();
+    if (!pile.awake) return;
     pile.acc += dt;
     var n = Math.min(8, Math.floor(pile.acc / SUB));
     pile.acc -= n * SUB;

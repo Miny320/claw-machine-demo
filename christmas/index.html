@@ -149,6 +149,9 @@
   // never touch each other. The elf sits on top, so no toy covers its face.
   // The long candy cane lies on the floor at the left end.
   // When the capsule arrives the pile gets an eleventh place (see winter/).
+  // back: true draws a toy behind the toys around it, and fit (smaller than 1)
+  // lets it sink deeper, so the toys in front cover its legs. Santa, the
+  // reindeer and the elf sit at the back, as the client asked.
   var FLOOR_ROW = [
     { r: 51.5, tilt: 0.04, art: 0 },      // candy cane
     { r: 51.5, tilt: 0.12, art: 4 },      // gingerbread girl
@@ -159,12 +162,12 @@
   var TOP_ROWS = [
     [
       { gap: 0, r: 51.5, tilt: 0.1, art: 6 },       // gift
-      { gap: 1, r: 51.5, tilt: -0.12, art: 9 },     // Santa
-      { gap: 2, r: 51.5, tilt: 0.1, art: 8 },       // reindeer
+      { gap: 1, r: 51.5, tilt: -0.12, art: 9, back: true, fit: 0.7 },   // Santa
+      { gap: 2, r: 51.5, tilt: 0.1, art: 8, back: true, fit: 0.7 },     // reindeer
       { gap: 3, r: 51.5, tilt: -0.16, art: 1 }      // Mrs Claus
     ],
     [
-      { gap: 1, r: 51.5, tilt: 0.04, art: 2 }       // elf
+      { gap: 1, r: 51.5, tilt: 0.04, art: 2, back: true }               // elf
     ]
   ];
 
@@ -669,10 +672,14 @@
   }
   function touchAct() { game.lastAct = game.time; }
 
-  function makeToy(x, r, tilt, art) {
+  // f is the toy's place in FLOOR_ROW or TOP_ROWS.
+  function makeToy(x, f) {
+    var r = f.r, tilt = f.tilt, art = f.art;
     return {
       art: art,                // which picture, see TOY_ARTS
-      fit: TOY_ARTS[art].fit || 1,
+      fit: f.fit || TOY_ARTS[art].fit || 1,   // a place can sink its toy deeper than the picture does
+      back: !!f.back,          // drawn behind the toys around it
+
       x: x, y: 0, px: x, py: 0, vx: 0, vy: 0, pvy: 0, pv: 0, r: r,
       angle: tilt, spin: 0, tilt: tilt,
       sq: 0, sqV: 0,           // squash and stretch
@@ -690,7 +697,7 @@
     for (i = 0; i < FLOOR_ROW.length; i++) {
       f = FLOOR_ROW[i];
       x += f.r;
-      b = makeToy(x, f.r, f.tilt, f.art);
+      b = makeToy(x, f);
       list.push(b);
       below.push(b);
       x += f.r;
@@ -700,7 +707,7 @@
       for (i = 0; i < TOP_ROWS[j].length; i++) {
         f = TOP_ROWS[j][i];
         a = below[f.gap];
-        b = makeToy(a.x + a.r, f.r, f.tilt, f.art);
+        b = makeToy(a.x + a.r, f);
         list.push(b);
         row.push(b);
       }
@@ -1719,11 +1726,14 @@
   }
 
   // Toys lower in the pile are drawn first. A toy in the claw keeps the
-  // place it had when it was grabbed.
+  // place it had when it was grabbed. Toys at the back (back: true in the
+  // layout) are drawn before all the others, the highest of them first, so
+  // the toys in front of them cover their legs.
   function depthOf(b) { return Math.round((b.y + b.r) / 14); }
   function byDepth(a, b) {
+    if (a.back !== b.back) return a.back ? -1 : 1;
     var la = a.held ? a.depth : depthOf(a), lb = b.held ? b.depth : depthOf(b);
-    if (la !== lb) return lb - la;
+    if (la !== lb) return a.back ? la - lb : lb - la;
     return b.x - a.x;
   }
   function drawToys(c) {

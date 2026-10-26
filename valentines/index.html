@@ -90,7 +90,7 @@
     goldenChance: 0.25,   // chance that a capsule holds the golden toy (0.25 = about 1 in 4)
     goldenMaxWait: 5,     // after this many capsules without it, the next capsule always holds it
     winSign: 'WINNER!',
-    winMessages: ['Lovely!'],
+    winMessages: ['Sweet!'],
     againLabel: 'Play again'
   };
 
@@ -105,15 +105,20 @@
   // it: toys touch at fit times their size. The floor, the walls and the claw
   // always use the full size.
   var TOY_ARTS = [
-    { id: 'toy-rose', cx: 0.501, cy: 0.504, r: 0.40 },
-    // The cupcake, the duck and the bear are tall, so they are drawn a little
-    // smaller than their body size. The chocolate box is wide, the same.
-    { id: 'toy-cupcake', cx: 0.484, cy: 0.515, r: 0.49 },
-    { id: 'toy-strawberry', cx: 0.453, cy: 0.504, r: 0.425 },
-    { id: 'toy-heart', cx: 0.506, cy: 0.485, r: 0.423 },
+    // The six toys with brown boots (rose, cupcake, strawberry, heart, envelope,
+    // chocolate box) are sized so their boots look the same size, as the
+    // client asked: r = sqrt(boot area in the 640 px picture) / 640 / 0.28.
+    // cy puts the bottom of the boots on the bottom of the toy's circle, so the
+    // boots of every toy line up on the floor.
+    { id: 'toy-rose', cx: 0.501, cy: 0.466, r: 0.44 },
+    { id: 'toy-cupcake', cx: 0.484, cy: 0.618, r: 0.433 },
+    { id: 'toy-strawberry', cx: 0.453, cy: 0.562, r: 0.421 },
+    { id: 'toy-heart', cx: 0.506, cy: 0.543, r: 0.358 },
+    // The duck and the bear are tall, so they are drawn a little smaller than
+    // their body size.
     { id: 'toy-duck', cx: 0.55, cy: 0.522, r: 0.40 },
-    { id: 'toy-envelope', cx: 0.495, cy: 0.487, r: 0.445 },
-    { id: 'toy-chocolates', cx: 0.471, cy: 0.494, r: 0.41 },
+    { id: 'toy-envelope', cx: 0.495, cy: 0.439, r: 0.442 },
+    { id: 'toy-chocolates', cx: 0.471, cy: 0.468, r: 0.39 },
     { id: 'toy-bear', cx: 0.5, cy: 0.489, r: 0.44 },
     { id: 'toy-cupid', cx: 0.552, cy: 0.499, r: 0.38 },
     // The toys come first. After them come the mystery capsule, its two halves

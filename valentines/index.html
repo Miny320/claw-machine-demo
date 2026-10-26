@@ -86,7 +86,7 @@
     carryMessage: 'Now bring it to the prize door!',
     capsuleMessage: 'Mystery! Bring it to the prize door!',
     capsuleSign: "What's inside?",
-    goldenSign: 'GOLDEN PRIZE!',
+    goldenSign: 'GOLDEN HEART!',
     goldenChance: 0.25,   // chance that a capsule holds the golden toy (0.25 = about 1 in 4)
     goldenMaxWait: 5,     // after this many capsules without it, the next capsule always holds it
     winSign: 'WINNER!',
@@ -123,7 +123,9 @@
     { id: 'toy-capsule-full', cx: 0.5, cy: 0.5, r: 0.5 },
     { id: 'toy-capsule-top', cx: 0.5, cy: 0.5, r: 0.5 },
     { id: 'toy-capsule-bottom', cx: 0.5, cy: 0.5, r: 0.5 },
-    { id: 'toy-golden', cx: 0.5, cy: 0.5, r: 0.42 }
+    // The golden heart has wide wings and only shows on the win screen, so r
+    // is set to fit the glow there, not to match the toys in the pile.
+    { id: 'toy-golden-heart', cx: 0.509, cy: 0.519, r: 0.32 }
   ];
   function artIndex(id) {
     for (var i = 0; i < TOY_ARTS.length; i++) if (TOY_ARTS[i].id === id) return i;
@@ -131,7 +133,7 @@
   }
   // Positions in TOY_ARTS. CAPSULE is also the number of toys.
   var CAPSULE = artIndex('toy-capsule-full'), CAP_TOP = artIndex('toy-capsule-top');
-  var CAP_BOTTOM = artIndex('toy-capsule-bottom'), GOLDEN = artIndex('toy-golden');
+  var CAP_BOTTOM = artIndex('toy-capsule-bottom'), GOLDEN = artIndex('toy-golden-heart');
   // Each half is drawn centred on the full capsule, the lid at the top and the
   // cup at the bottom. The numbers are the width of a half as a fraction of the
   // full capsule width.
@@ -186,7 +188,7 @@
     floor: '#FFFFFF',
     body: '#DDDDDD', bodyDark: '#AFAFAF', bodyLight: '#A7EAEF', panel: '#DDDDDD',
     plinth: '#AFAFAF', feet: '#8E8E8E',
-    glass: '#E0D3FF', glassBand: '#D2C1FA', glassMark: '#FCD3E4',
+    glass: '#E0D3FF', glassBand: '#D2C1FA', glassMark: '#FFFFFF',
     inFloor: '#FFFFFF', hole: '#C170FF',
     sign: '#DDDDDD', signDark: '#C4C4C4', plate: '#F38FFC',
     btn: '#F38FFC', btnDark: '#D46ADE',

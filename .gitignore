@@ -4,3 +4,4 @@ tools/
 Thumbs.db
 .DS_Store
 invoices/
+delivery/

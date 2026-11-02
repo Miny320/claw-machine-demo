@@ -10,7 +10,8 @@ There is nothing to install and no login.
 | Winter | `winter/index.html` | https://claw-machine-demo.vercel.app/winter/ |
 | Christmas | `christmas/index.html` | https://claw-machine-demo.vercel.app/christmas/ |
 | Valentine's Day | `valentines/index.html` | https://claw-machine-demo.vercel.app/valentines/ |
-| Fall (in progress) | `fall/index.html` | https://claw-machine-demo.vercel.app/fall/ |
+| Fall | `fall/index.html` | https://claw-machine-demo.vercel.app/fall/ |
+| Birthday (in progress) | `birthday/index.html` | https://claw-machine-demo.vercel.app/birthday/ |
 | Original demo | `index.html` | https://claw-machine-demo.vercel.app |
 
 <p>
@@ -23,7 +24,7 @@ There is nothing to install and no login.
 Open one of the links above, or run it from your own computer:
 
 1. Download this repository.
-2. Double-click the `index.html` in a theme folder (`halloween/`, `winter/`, `christmas/`, `valentines/` or `fall/`), or `index.html` for the original demo.
+2. Double-click the `index.html` in a theme folder (`halloween/`, `winter/`, `christmas/`, `valentines/`, `fall/` or `birthday/`), or `index.html` for the original demo.
 
 It opens in Chrome, Edge or Safari.
 It needs no server, no build step and no internet.
@@ -137,7 +138,8 @@ Still to check by hand: Safari on an iPad or a Mac, and a real Chromebook.
 | `winter/index.html` | The Winter version |
 | `christmas/index.html` | The Christmas version |
 | `valentines/index.html` | The Valentine's Day version |
-| `fall/index.html` | The Fall version (in progress) |
+| `fall/index.html` | The Fall version |
+| `birthday/index.html` | The Birthday version (in progress) |
 | `index.html` | The original demo |
 | `screenshots/` | The pictures on this page |
 

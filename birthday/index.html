@@ -154,26 +154,30 @@
   // pinks (pink gift, cake), the blues (candle, round gift) and the yellows
   // (party hat, cupcake). The wide crown sits on the floor. The balloon dog and
   // the pinata, with their faces at the top of their pictures, sit higher up.
-  // The mystery capsule is tucked in the middle row, and the pinata sits on top
-  // of the capsule and the cupcake.
+  // The mystery capsule is tucked in the middle row. The candle sits on top of
+  // the pile so its flame shows (client, 2026-11-03), and the cake's candles
+  // stay clear at the end of the middle row.
   // back: true draws a toy behind the toys around it, and fit (smaller than 1)
   // lets it sink deeper, so the toys in front cover its legs.
+  // front: true draws a toy in front of the toys around it: the party hat's
+  // pom pom shows over the capsule (client, 2026-11-03), and the pinata's face
+  // shows over the candle's boot.
   var FLOOR_ROW = [
-    { r: 51.5, tilt: -0.04, art: 3 },     // round gift
-    { r: 51.5, tilt: 0.06, art: 1 },      // party hat
-    { r: 51.5, tilt: -0.05, art: 2 },     // pink gift
-    { r: 51.5, tilt: 0.06, art: 5 },      // candle
-    { r: 51.5, tilt: -0.03, art: 6 }      // crown
+    { r: 51.5, tilt: -0.04, art: 3 },                 // round gift
+    { r: 51.5, tilt: 0.06, art: 1, front: true },     // party hat
+    { r: 51.5, tilt: -0.05, art: 2 },                 // pink gift
+    { r: 51.5, tilt: 0.06, art: 6 },                  // crown
+    { r: 51.5, tilt: -0.03, art: 7 }                  // cupcake
   ];
   var TOP_ROWS = [
     [
-      { gap: 0, r: 51.5, tilt: 0.06, art: 0 },      // balloon dog
-      { gap: 1, r: 51.5, tilt: 0, art: CAPSULE },   // mystery capsule
-      { gap: 2, r: 51.5, tilt: -0.06, art: 7 },     // cupcake
-      { gap: 3, r: 51.5, tilt: 0.05, art: 4 }       // cake
+      { gap: 0, r: 51.5, tilt: 0.06, art: 0 },                  // balloon dog
+      { gap: 1, r: 51.5, tilt: 0, art: CAPSULE },               // mystery capsule
+      { gap: 2, r: 51.5, tilt: -0.06, art: 8, front: true },    // pinata
+      { gap: 3, r: 51.5, tilt: 0.05, art: 4 }                   // cake
     ],
     [
-      { gap: 1, r: 51.5, tilt: -0.04, art: 8 }      // pinata
+      { gap: 1, r: 51.5, tilt: -0.04, art: 5 }      // candle
     ]
   ];
 
@@ -735,6 +739,7 @@
       art: art,                // which picture, see TOY_ARTS
       fit: f.fit || TOY_ARTS[art].fit || 1,   // a place can sink its toy deeper than the picture does
       back: !!f.back,          // drawn behind the toys around it
+      front: !!f.front,        // drawn in front of the toys around it
 
       x: x, y: 0, px: x, py: 0, vx: 0, vy: 0, pvy: 0, pv: 0, r: r,
       angle: tilt, spin: 0, tilt: tilt,
@@ -1796,10 +1801,13 @@
   // Toys lower in the pile are drawn first. A toy in the claw keeps the
   // place it had when it was grabbed. Toys at the back (back: true in the
   // layout) are drawn before all the others, the highest of them first, so
-  // the toys in front of them cover their legs.
+  // the toys in front of them cover their legs. Toys in front (front: true)
+  // are drawn after all the others, so the top of their picture (a pom pom)
+  // shows over the toys that rest on them.
   function depthOf(b) { return Math.round((b.y + b.r) / 14); }
+  function layerOf(b) { return b.back ? 0 : (b.front ? 2 : 1); }
   function byDepth(a, b) {
-    if (a.back !== b.back) return a.back ? -1 : 1;
+    if (layerOf(a) !== layerOf(b)) return layerOf(a) - layerOf(b);
     var la = a.held ? a.depth : depthOf(a), lb = b.held ? b.depth : depthOf(b);
     if (la !== lb) return a.back ? la - lb : lb - la;
     return b.x - a.x;

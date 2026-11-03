@@ -51,6 +51,11 @@ Sometimes a rare golden toy comes out instead, with a golden glow (a golden pump
 It is never in the pile, and it never comes twice in a row.
 
 The claw grabs the toy right below it.
+To choose a toy, tap or click it inside the glass.
+This also works for a toy at the bottom of the pile, and the claw pushes the toy on top of it aside.
+With the arrow buttons or keys, a toy under another toy is chosen from one side of the top toy.
+On the side where the lower toy sticks out (the left side when the two sit straight on top of each other), the dotted line goes down to the lower toy and it wiggles.
+On the other side, the top toy is chosen.
 When the claw is in the right place, that toy wiggles and the DROP button pulses.
 If nothing is below the claw, it comes up empty and the player can try again.
 

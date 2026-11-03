@@ -647,6 +647,7 @@
     grip: GRIP_REST, gripFrom: 0, gripGoal: 0,   // how open the fingers are
     sway: 0, swayV: 0,         // small swing of the hanging claw
     goalX: null,               // where a tap on the glass asked the claw to go
+    pick: null,                // the toy the player touched inside the glass
     target: null,              // the toy the claw would grab right now
     held: null,                // the toy in the claw
     holdAngle: 0, holdDx: 0, holdDy: 0, holdL: 0
@@ -788,28 +789,61 @@
     return { x: claw.x - Math.sin(claw.sway) * d, y: PIVOT_Y + Math.cos(claw.sway) * d };
   }
 
-  // True when another toy sits right on top of this one, so the claw cannot reach it.
-  function isCovered(b) {
-    for (var i = 0; i < balls.length; i++) {
-      var o = balls[i];
-      if (o === b || o.held) continue;
-      if (o.y < b.y - b.r * 0.3 && Math.abs(o.x - b.x) < o.r * 0.6) return true;
+  // Every toy can be grabbed, also one with another toy right on top of it
+  // (client, 2026-11-04: the toys in the bottom row). On the way down the claw
+  // pushes the toy on top aside, so it rolls off to the side instead of the
+  // claw reaching through it. When the claw lifts its toy, the toys around it
+  // slide off and fall back into the pile.
+  var PUSH_SPEED = 320;
+  function pushAside(t) {
+    var p = palmPos(), i, o, dir;
+    for (i = 0; i < balls.length; i++) {
+      o = balls[i];
+      if (o === t || o.held || o.y > t.y - t.r * 0.3) continue;   // only toys above the target
+      if (Math.abs(o.x - t.x) >= o.r * 0.75) continue;              // not (or no longer) in the way
+      if (p.y < o.y - o.r - 6) continue;                            // the claw has not reached it yet
+      dir = o.x < t.x ? -1 : 1;
+      if (o.x + dir * o.r * 1.5 > PILE_R || o.x + dir * o.r * 1.5 < PILE_L) dir = -dir;   // no room there
+      o.vx = dir * PUSH_SPEED;
+      wakePile();
     }
-    return false;
   }
   // The toy the claw would grab if it dropped at x, or null.
-  // It is the toy most directly below the claw. Higher toys win a close call.
+  // A toy the player touched inside the glass wins while the claw is over it.
+  // Otherwise it is the toy whose middle is closest to the claw (higher toys
+  // win a close call). When that toy sits right on top of another toy, the
+  // claw can reach past it (client, 2026-11-04): on the side where the lower
+  // toy sticks out (the left side when the two sit straight on top of each
+  // other) the dotted line goes down to the lower toy and that toy wiggles.
+  // On the other side the top toy is the target.
   function findTarget(x) {
+    var p = claw.pick;
+    if (p && !p.held && balls.indexOf(p) >= 0 && Math.abs(x - p.x) <= p.r) return p;
     var best = null, bestScore = 1e9;
     for (var i = 0; i < balls.length; i++) {
       var b = balls[i];
       if (b.held) continue;
       var d = Math.abs(x - b.x);
-      if (d > b.r * SETTINGS.grabRange || isCovered(b)) continue;
-      var score = d + b.y * 0.15;
+      if (d > b.r * SETTINGS.grabRange) continue;
+      var score = d + b.y * 0.05;
       if (score < bestScore) { best = b; bestScore = score; }
     }
+    var under = best ? toyUnder(best) : null;
+    if (under) {
+      var side = under.x - best.x > 3 ? 1 : -1;     // where the lower toy sticks out
+      if ((x - best.x) * side > 0) best = under;
+    }
     return best;
+  }
+  // The toy that toy t sits right on top of, or null.
+  function toyUnder(t) {
+    var found = null;
+    for (var i = 0; i < balls.length; i++) {
+      var b = balls[i];
+      if (b === t || b.held) continue;
+      if (t.y < b.y - b.r * 0.3 && Math.abs(t.x - b.x) < t.r * 0.6 && (!found || b.y < found.y)) found = b;
+    }
+    return found;
   }
   // How low the palm can go at x when there is nothing to grab.
   // The claw stops when its body or a finger tip touches a toy or the floor.
@@ -878,16 +912,28 @@
     if (dx >= GLASS.x && dx <= GLASS.x + GLASS.w && dy >= GLASS.y && dy <= GLASS.y + GLASS.h) return 'glass';
     return null;
   }
-  function aimAt(cx) {
+  // The toy drawn at a point inside the glass (machine units), or null.
+  function toyAt(x, y) {
+    var list = balls.slice().sort(byDepth), i, b;
+    for (i = list.length - 1; i >= 0; i--) {     // the toy drawn in front first
+      b = list[i];
+      if (!b.held && hyp(x - b.x, y - b.y) <= b.r) return b;
+    }
+    return null;
+  }
+  function aimAt(cx, cy) {
     if (!canSteer()) return;
     var rect = canvas.getBoundingClientRect();
-    claw.goalX = clamp((cx - rect.left - view.ox) / view.s, X_MIN, X_MAX);
+    var x = (cx - rect.left - view.ox) / view.s, y = (cy - rect.top - view.oy) / view.s;
+    claw.goalX = clamp(x, X_MIN, X_MAX);
+    claw.pick = game.state === 'carrying' ? null : toyAt(x, y);
     touchAct();
   }
   function pressMove(role) {
     if (!canSteer()) return;
     tapUntil[role] = game.time + 0.16;
     claw.goalX = null;
+    claw.pick = null;
     touchAct();
     sfx.click();
   }
@@ -898,10 +944,10 @@
     if (role === 'left' || role === 'right') pressMove(role);
     else if (role === 'drop') { game.dropFlash = game.time; tryDrop(); }
     else if (role === 'again') playAgain();
-    else if (role === 'glass') aimAt(cx);
+    else if (role === 'glass') aimAt(cx, cy);
   }
   function pointerMove(id, cx, cy, isMouse) {
-    if (pointers[id] === 'glass') aimAt(cx);
+    if (pointers[id] === 'glass') aimAt(cx, cy);
     if (isMouse) {
       var role = roleAt(cx, cy);
       var live = role === 'sound' || role === 'full' || role === 'again' ||
@@ -1023,6 +1069,7 @@
     var dir = (input.right ? 1 : 0) - (input.left ? 1 : 0);
     if (dir !== 0) {
       claw.goalX = null;
+      claw.pick = null;
       driveTrolley(dir * SETTINGS.moveSpeed, dt);
     } else if (claw.goalX !== null) {
       driveTo(claw.goalX, SETTINGS.moveSpeed, dt);
@@ -1037,6 +1084,7 @@
     touchAct();
     claw.goalX = null;
     claw.target = findTarget(claw.x);
+    claw.pick = null;
     claw.Lv = 0;
     setState('dropping');
     if (sign.text === SETTINGS.startMessage) setSign(SETTINGS.title);
@@ -1052,6 +1100,7 @@
     if (t) {
       if (SETTINGS.autoAlign) driveTo(clamp(t.x, X_MIN, X_MAX), SETTINGS.moveSpeed, dt);
       else driveTrolley(0, dt);
+      pushAside(t);
       stop = t.y - t.r - 2;
     } else {
       driveTrolley(0, dt);

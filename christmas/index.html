@@ -248,6 +248,7 @@
 
   var G = 2600;            // gravity for the toys
   var SUB = 1 / 120;       // physics step
+  var PUSH_GAIN = 3000;    // how much a push may speed a toy up, per second
 
   // ------------------------------------------------------------------
   // 4. Small helpers
@@ -639,7 +640,7 @@
   var balls = [];          // toys inside the machine
   var prize = null;        // the toy on its way out, after the claw lets go
   var confetti = [];
-  var pile = { awake: true, calm: 0, acc: 0, fast: 0 };
+  var pile = { awake: true, calm: 0, acc: 0, fast: 0, filling: true };
   var claw = {
     x: HOME_X, v: 0,           // trolley position and speed
     L: L_MIN, Lv: 0,           // cable length and speed
@@ -687,7 +688,8 @@
       sq: 0, sqV: 0,           // squash and stretch
       wig: 0,                  // "pick me" wiggle, 0 to 1
       held: false, onFloor: false, touch: false,
-      lastX: 0, lastY: 0, depth: 0
+      lastX: 0, lastY: 0, depth: 0,
+      mx: 0, my: 0             // how far a toy in the claw moves in one physics step
     };
   }
 
@@ -726,6 +728,7 @@
     pile.awake = true;
     pile.calm = 0;
     pile.fast = 1e9;
+    pile.filling = true;     // the toys drop in (see the push limit in stepPile)
   }
   function wakePile() { pile.awake = true; pile.calm = 0; }
 
@@ -801,6 +804,7 @@
       if (o === t || o.held || o.y > t.y - t.r * 0.3) continue;   // only toys above the target
       if (Math.abs(o.x - t.x) >= o.r * 0.75) continue;              // not (or no longer) in the way
       if (p.y < o.y - o.r - 6) continue;                            // the claw has not reached it yet
+      pile.filling = false;
       dir = o.x < t.x ? -1 : 1;
       if (o.x + dir * o.r * 1.5 > PILE_R || o.x + dir * o.r * 1.5 < PILE_L) dir = -dir;   // no room there
       o.vx = dir * PUSH_SPEED;
@@ -1119,6 +1123,7 @@
 
   function startClose() {
     var t = claw.target, p = palmPos();
+    pile.filling = false;
     setState('closing');
     game.squeezed = false;
     claw.gripFrom = claw.grip;
@@ -1387,22 +1392,46 @@
         for (j = i + 1; j < n; j++) {
           o = balls[j];
           if (b.held && o.held) continue;
+          if ((b.held || o.held) && it > 0) continue;   // the claw's toy pushes once per step (see below)
           var dx = o.x - b.x, dy = o.y - b.y, reach = b.r * b.fit + o.r * o.fit;
           var d2 = dx * dx + dy * dy;
           if (d2 >= reach * reach) continue;
           var d = Math.sqrt(d2), nx = 0, ny = -1;
           if (d > 0.0001) { nx = dx / d; ny = dy / d; }
           var pen = reach - d;
-          var wb = b.held ? 0 : (o.held ? 1 : 0.5);
-          var wo = o.held ? 0 : (b.held ? 1 : 0.5);
-          // A toy in the claw only pushes the others sideways, it never lifts
-          // them. A toy resting on it slides off and falls back into the pile,
-          // instead of riding up and getting stuck against the side wall.
-          var up = (b.held || o.held) ? 0 : 1;
-          b.x -= nx * pen * wb;
-          b.y -= ny * pen * wb * up;
-          o.x += nx * pen * wo;
-          o.y += ny * pen * wo * up;
+          if (b.held || o.held) {
+            // h is the toy in the claw, f the free toy, (sx, sy) points from h to f.
+            // It pushes only once per physics step, so a push is never bigger
+            // than its own move in that step.
+            var h = b.held ? b : o, f = b.held ? o : b;
+            var sx = b.held ? nx : -nx, sy = b.held ? ny : -ny;
+            if (sy < 0) {
+              // f rests on the claw's toy. While the claw closes, f simply rests
+              // on it. Once the claw lifts or carries, f is never lifted: it is
+              // pushed sideways, at most as far as the claw's toy moves, so it
+              // slides off and falls back into the pile instead of riding up and
+              // getting stuck against the side wall, and a toy that cannot move
+              // aside is passed by instead of being squeezed out and thrown.
+              if (game.state === 'closing') {
+                f.x += sx * pen;
+                f.y += sy * pen;
+              } else {
+                f.x += sx * Math.min(pen, Math.max(0, h.mx * sx + h.my * sy));
+              }
+            } else {
+              // f is beside or under the claw's toy: it is pushed only as far
+              // as the claw's toy moves into it, and never up. A toy the claw's
+              // toy was resting on can never be squeezed out and thrown.
+              var push = Math.min(pen, Math.max(0, h.mx * sx + h.my * sy));
+              f.x += sx * push;
+              f.y += sy * push;
+            }
+          } else {
+            b.x -= nx * pen * 0.5;
+            b.y -= ny * pen * 0.5;
+            o.x += nx * pen * 0.5;
+            o.y += ny * pen * 0.5;
+          }
           b.touch = true;
           o.touch = true;
         }
@@ -1427,10 +1456,14 @@
       }
       if (b.onFloor || b.touch) vx *= rub;
       // A push may speed a toy up only a little, so nothing ever shoots away.
-      var sp = hyp(vx, vy);
-      if (sp > b.pv + 420) {
-        vx *= (b.pv + 420) / sp;
-        vy *= (b.pv + 420) / sp;
+      // The limit is per second, not per step, so many small pushes in a row
+      // cannot add up to a throw either. While the toys drop in after a fill,
+      // the older per-step limit stays, because it gives the pile the look the
+      // client approved.
+      var sp = hyp(vx, vy), most = b.pv + (pile.filling ? 420 : PUSH_GAIN * dt);
+      if (sp > most) {
+        vx *= most / sp;
+        vy *= most / sp;
       }
       b.vx = vx;
       b.vy = vy;
@@ -1450,7 +1483,7 @@
       pile.calm = 0;
     } else {
       pile.calm += dt;
-      if (pile.calm > 0.35) pile.awake = false;     // nothing moves: stop computing
+      if (pile.calm > 0.35) { pile.awake = false; pile.filling = false; }     // nothing moves: stop computing
     }
   }
 
@@ -1473,7 +1506,7 @@
     if (n === 0) return;
     // The grabbed toy moves with the claw. Spread its move over the small steps.
     var hx = 0, hy = 0;
-    if (h) { hx = h.x; hy = h.y; }
+    if (h) { hx = h.x; hy = h.y; h.mx = (hx - h.lastX) / n; h.my = (hy - h.lastY) / n; }
     for (i = 1; i <= n; i++) {
       if (h) { h.x = lerp(h.lastX, hx, i / n); h.y = lerp(h.lastY, hy, i / n); }
       stepPile(SUB);
